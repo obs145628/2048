@@ -31,9 +31,9 @@ def run_server(port, data_dir, index):
         emit('g2048', {'ab': ['cd', 'ef']})
         
     socketio.run(app, host='0.0.0.0', port=int(port), debug=True)
-
-
+    
     
 
 if __name__ == '__main__':
     run_server('8080', 'public', 'static/index.html')
+    
