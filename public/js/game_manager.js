@@ -271,3 +271,12 @@ GameManager.prototype.tileMatchesAvailable = function () {
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
 };
+
+GameManager.prototype.getState = function () {
+    var cells = this.grid.cells;
+    var res = [];
+    for (var i = 0; i < 4; ++i)
+	for (var j = 0; j < 4; ++j)
+	    res.push(cells[j][i] ? cells[j][i].value : 0);
+    return res;
+};

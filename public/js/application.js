@@ -1,21 +1,43 @@
 
 
-window.g_game = null;
-
 // Wait till the browser is ready to render the game (avoids glitches)
 window.requestAnimationFrame(function () {
-    Math.seedrandom(456);
+    var game = new GameManager(4, KeyboardInputManager, HTMLActuator, LocalStorageManager);
 
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
-    socket.on('connect', function() {
-	console.log('co');
-	socket.emit('g2048', {data: 'I\'m connected!'});
-    });
+    
+    var sock = io.connect('http://' + document.domain + ':' + location.port);
+    sock.on('req', function(data) {
+	idx = data[0];
+	req = data[1];
 
-    socket.on('g2048', function(msg) {
-	console.log('got message:', msg);
+	if (req[0] == 'R')
+	{
+	    game.restart();
+	    sock.emit('req', [idx, game.getState()]);
+	}
+
+	else if (req[0] == 'SEED')
+	{
+	    Math.seedrandom(req[1]);
+	    sock.emit('req', [idx, null]);
+	}
+
+	else if(req[0] == 'S')
+	{
+	    var dirs = [0, 1, 2, 3];
+	    var old_score = game.score;
+	    game.move(dirs[req[1]]);
+	    var state = game.getState();
+	    var reward = game.score - old_score;
+	    var done = !game.movesAvailable();
+	    sock.emit('req', [idx, [state, reward, done]])
+	}
+
+	else
+	{
+	    console.error('Invalid request:', req);
+	    sock.emit('req', [idx, null]);
+	}
+	
     });
-    
-    
-    window.g_game = new GameManager(4, KeyboardInputManager, HTMLActuator, LocalStorageManager);
 });

@@ -14,6 +14,15 @@ pip install -r requirements.txt
 git submodule update --init
 ```
 
+Start by running the server:
+```shell
+python server.py
+```
+
+Open the app url, and run a basic example with:
+```shell
+python test.py
+```
 
 
 ### Contributions
